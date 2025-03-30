@@ -1,0 +1,27 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "connect devs across the world",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arun998/devTinder_MF.git"
+  },
+  "keywords": [
+    "node.js",
+    "javascript"
+  ],
+  "author": "Arun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arun998/devTinder_MF/issues"
+  },
+  "homepage": "https://github.com/Arun998/devTinder_MF#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
