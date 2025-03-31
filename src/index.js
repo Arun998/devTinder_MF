@@ -1,4 +1,5 @@
 const express = require('express');
+const routes = require('./routes');
 
 const app = express();
 
@@ -8,11 +9,8 @@ app.use('/home',(req,res)=>{
     res.send("Hello from home");
 });
 
-app.use('/',(req,res)=>{
-    res.send("Hello from dashBoard");
-});
-
-
+// use the routes
+app.use('/',routes);
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
