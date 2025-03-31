@@ -49,6 +49,40 @@ app.get('/feed',async(req,res)=>{
     catch(err){
         res.status(400).send("something went wrong")
     }
+});
+
+// delete the user based on userId;
+
+app.delete('/user', async(req,res)=>{
+    try{
+        console.log(req.body.emailId) // user id is the _id in dataBase
+        // delete the user based on Id
+        // const userId = await User.findByIdAndDelete(req.body.userId); 
+
+        // delete the user based on emailId;
+        const emailId = await User.findOneAndDelete({emailId : req.body.emailId})
+
+        res.send('user deleted sucesfully')
+    }
+    catch(err){
+        res.status(400).send("something went wrong")
+    }
+});
+
+// update the user based on userId and emailID;
+
+app.patch('/user',async(req,res)=>{
+    try{
+        // updating user based on userId;
+        // const userId = await User.findByIdAndUpdate(req.body.userId,req.body)
+
+        // update user based on emailId
+        const userId = await User.findOneAndUpdate({emailId : req.body.emailId},req.body)
+        res.send("user updated sucessfully")
+    }
+    catch(err){
+        res.status(400).send("something went wrong")
+    }
 })
 
 connectDB().then(()=>{
