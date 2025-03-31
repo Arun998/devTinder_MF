@@ -21,6 +21,34 @@ app.post('/signup',async (req,res)=>{
     }
         
 
+});
+
+// get user from particular email id 
+app.get('/user',async(req,res)=>{
+
+    try{
+        const userEmail = await User.find({emailId : req.body.emailId})
+
+        res.send(userEmail)
+    }
+    catch (err){
+        res.status(400).send("something went wrong");
+    }
+   
+})
+
+// get all users documents from User collection 
+
+app.get('/feed',async(req,res)=>{
+    try{
+        // give empty filter in find to get all the users 
+        const users = await User.find({});
+        
+        res.send(users)
+    }
+    catch(err){
+        res.status(400).send("something went wrong")
+    }
 })
 
 connectDB().then(()=>{
