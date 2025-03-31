@@ -4,16 +4,13 @@ const connectDB = require('./config/database');
 const app = express();
 const User = require('./models/user')
 
-app.post('/signup',async (req,res)=>{
-    const user = new User({
-        firstName : "Arun",
-        lastName : "k",
-        emailId : "arun.k@gmail.com",
-        password : "****",
-        age : 18,
-        gender : "male"
+// express json middleware
+app.use(express.json());
 
-    });
+app.post('/signup',async (req,res)=>{
+
+    // adding data from post man request
+    const user = new User(req.body);
 
     try{
         await user.save();
