@@ -5,9 +5,12 @@ const app = express();
 const User = require('./models/user')
 const { validateUserSchema } = require('./utils/validator');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
 // express json middleware
 app.use(express.json());
+app.use(cookieParser());
 
 app.post('/signup',async (req,res)=>{
 
@@ -43,6 +46,7 @@ app.post('/login',async(req,res)=>{
     const { emailId , password} = req.body;
 
     const user = await User.findOne({emailId: emailId});
+    const token = jwt.sign({_id :user._id},'arundev')
 
     try{
         if(!user){
@@ -50,10 +54,12 @@ app.post('/login',async(req,res)=>{
         }
         const isPasswordValid = await bcrypt.compare(password,user.password); // comparing the password
         if(!isPasswordValid){
+            res.clearCookie("token",{ path: "/" })
             res.send("invalid credentials")
         }
         else{
-            res.send("logged in sucessfully")
+            res.cookie("token", token)
+            res.send(`${user.firstName} logged in sucessfully`)
         }
 
     }
@@ -62,8 +68,29 @@ app.post('/login',async(req,res)=>{
     }
 
 
-})
+});
 
+// get user profile
+
+app.get('/profile',async(req,res)=>{
+    try{
+        const cookie = req.cookies  // get the cookies
+        const {token} = cookie;
+        if(!token){
+            throw new Error("Invalid Token")
+        }
+        const decodeToken = await jwt.verify(token,"arundev")
+        const profileData = await User.findById(decodeToken._id);
+        if(!profileData){
+            throw new Error("Profile data not availabe for this user")
+        }
+        res.send(profileData)
+    }
+    catch(err){
+        res.status(400).send("ERROR: " + err.message);
+    }
+   
+})
 // get user from particular email id 
 app.get('/user',async(req,res)=>{
 
@@ -119,10 +146,13 @@ app.patch('/user',async(req,res)=>{
 
         // update user based on emailId
         const userId = await User.findOneAndUpdate({emailId : req.body.emailId},req.body)
+        if(!userId){
+            throw new Error("invalid")
+        }
         res.send("user updated sucessfully")
     }
     catch(err){
-        res.status(400).send("something went wrong")
+        res.status(400).send("something went wrong 🤗")
     }
 })
 
