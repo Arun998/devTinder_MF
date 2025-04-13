@@ -46,7 +46,7 @@ authRouter.post('/login',async(req,res)=>{
         }
         const isPasswordValid = await user.validatePassword(password)// comparing the password
         if(!isPasswordValid){
-            res.clearCookie("token",{ path: "/" })
+            res.clearCookie("token",{ path: "/" }) // this way also we can clear cookie another way written in logout;
             res.send("invalid credentials")
         }
         else{
@@ -63,5 +63,18 @@ authRouter.post('/login',async(req,res)=>{
 
 });
 
+authRouter.post('/logout',async(req,res)=>{
+    try{
+        // res.clearCookie("token",{path: "/"});
+        //other way to clear cookie
+        res.cookie("token",null,{
+            expires : new Date(Date.now())
+        })
+        res.send("user logged out sucessfully.")
+    }
+    catch(err){
+        res.status(404).send("something went wrong")
+    }
+})
 
 module.exports = authRouter;

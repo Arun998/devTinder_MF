@@ -13,6 +13,12 @@ const validateUserSchema =(req)=>{
     }
 }
 
+const validateProfileEditData = (req)=>{
+    const allowedFields = ['firstName','lastName',"age","gender","skills","about", "photoUrl"];
+    return Object.keys(req.body).every(field=>allowedFields.includes(field));
+}
+
 module.exports ={
-    validateUserSchema
+    validateUserSchema,
+    validateProfileEditData
 }
