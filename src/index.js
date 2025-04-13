@@ -7,6 +7,7 @@ const { validateUserSchema } = require('./utils/validator');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const {userAuth} = require('./middlewares/auth')
 
 // express json middleware
 app.use(express.json());
@@ -46,19 +47,19 @@ app.post('/login',async(req,res)=>{
     const { emailId , password} = req.body;
 
     const user = await User.findOne({emailId: emailId});
-    const token = jwt.sign({_id :user._id},'arundev')
 
     try{
         if(!user){
             throw new Error("user not exists")
         }
-        const isPasswordValid = await bcrypt.compare(password,user.password); // comparing the password
+        const isPasswordValid = await user.validatePassword(password)// comparing the password
         if(!isPasswordValid){
             res.clearCookie("token",{ path: "/" })
             res.send("invalid credentials")
         }
         else{
-            res.cookie("token", token)
+            const token = await user.getJWT();
+            res.cookie("token", token) // we can expire cookie as well
             res.send(`${user.firstName} logged in sucessfully`)
         }
 
@@ -72,18 +73,9 @@ app.post('/login',async(req,res)=>{
 
 // get user profile
 
-app.get('/profile',async(req,res)=>{
+app.get('/profile',userAuth,async(req,res)=>{
     try{
-        const cookie = req.cookies  // get the cookies
-        const {token} = cookie;
-        if(!token){
-            throw new Error("Invalid Token")
-        }
-        const decodeToken = await jwt.verify(token,"arundev")
-        const profileData = await User.findById(decodeToken._id);
-        if(!profileData){
-            throw new Error("Profile data not availabe for this user")
-        }
+        const profileData = req.user;
         res.send(profileData)
     }
     catch(err){
