@@ -43,4 +43,34 @@ requestRouter.post('/request/send/:status/:userId',userAuth,async(req,res)=>{
     }
 });
 
+// review api accepted or rejected
+requestRouter.post('/request/review/:status/:requestId', userAuth, async (req, res) => {
+    try {
+        const status = req.params.status;
+        const requestId = req.params.requestId;
+        const allowedStatus = ["accepted", "rejected"];
+        
+        if (!allowedStatus.includes(status)) {
+            return res.status(400).json({ message: 'invalid review request: ' + status });
+        }
+
+        const connectionRequest = await ConnectionRequest.findOne({
+            _id: requestId,
+            toUserId: req.user._id,
+            status: "intrested"
+        });
+
+        if (!connectionRequest) {
+            return res.status(404).json({ message: "Connection request not found!" });
+        }
+
+        connectionRequest.status = status;
+        await connectionRequest.save();
+        return res.send("Connection request reviewed successfully");
+    } catch (err) {
+        return res.status(400).send("ERROR: " + err.message);
+    }
+});
+
+
 module.exports = requestRouter;
