@@ -36,13 +36,14 @@ authRouter.post('/signup',async (req,res)=>{
 
 authRouter.post('/login',async(req,res)=>{
 
+    
     const { emailId , password} = req.body;
 
     const user = await User.findOne({emailId: emailId});
 
     try{
         if(!user){
-            throw new Error("user not exists")
+            throw new Error("user not exists try again");
         }
         const isPasswordValid = await user.validatePassword(password)// comparing the password
         if(!isPasswordValid){

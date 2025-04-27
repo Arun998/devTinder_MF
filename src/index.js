@@ -3,9 +3,14 @@ const routes = require('./routes');
 const connectDB = require('./config/database');
 const app = express();
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 
 // express json middleware
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
