@@ -7,8 +7,11 @@ const {validateProfileEditData} = require("../utils/validator")
 
 profileRouter.get('/profile/view',userAuth,async(req,res)=>{
     try{
-        const profileData = req.user;
-        res.send(profileData)
+        const user = req.user;
+        res.json({
+            message : "user profile fetched sucessfully",
+            user
+        });
     }
     catch(err){
         res.status(400).send("ERROR: " + err.message);

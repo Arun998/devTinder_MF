@@ -36,7 +36,6 @@ authRouter.post('/signup',async (req,res)=>{
 
 authRouter.post('/login',async(req,res)=>{
 
-    
     const { emailId , password} = req.body;
 
     const user = await User.findOne({emailId: emailId});
@@ -53,7 +52,10 @@ authRouter.post('/login',async(req,res)=>{
         else{
             const token = await user.getJWT();
             res.cookie("token", token) // we can expire cookie as well
-            res.send(`${user.firstName} logged in sucessfully`)
+            res.json({
+                message: "user logged in sucessfully",
+                user,
+            })
         }
 
     }
